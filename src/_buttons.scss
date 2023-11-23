@@ -1,0 +1,22 @@
+@use "./variables" as *;
+
+.buttons{
+    &__button{
+        background-color: $color-dark-grey;
+        padding: 30px;
+        border-radius: 50%;
+        outline: none;
+        border: none;
+
+        &--orange{
+            background-color: $color-orange;
+        }
+
+        &--light-grey{
+            background-color: $color-light-grey;
+        }
+
+    }
+
+
+}
