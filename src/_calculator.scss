@@ -1,0 +1,7 @@
+@use "./variables" as *;
+
+.calculator{
+    &__output{
+        color: $color-white;
+    }
+}

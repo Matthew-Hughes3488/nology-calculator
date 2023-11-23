@@ -1,0 +1,18 @@
+@use "./variables" as *;
+@use "./buttons";
+@use "./calculator";
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: $color-black;
+}
+
+main{
+    max-width: 320px;
+    max-height: 568px;
+}

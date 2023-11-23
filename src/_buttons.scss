@@ -1,0 +1,30 @@
+@use "./variables" as *;
+
+.buttons{
+    margin: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 5px;
+    &__button{
+        background-color: $color-dark-grey;
+        padding: 20px;
+        border-radius: 50%;
+        outline: none;
+        border: none;
+        font-size: 1rem;
+
+        &--orange{
+            background-color: $color-orange;
+        }
+
+        &--light-grey{
+            background-color: $color-light-grey;
+        }
+
+        &--zero{
+            grid-column: 1/3;
+            border-radius: 40%;
+        }
+    }
+}
