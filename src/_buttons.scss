@@ -8,10 +8,11 @@
     gap: 5px;
     &__button{
         background-color: $color-dark-grey;
-        padding: 30px;
+        padding: 20px;
         border-radius: 50%;
         outline: none;
         border: none;
+        font-size: 1rem;
 
         &--orange{
             background-color: $color-orange;
