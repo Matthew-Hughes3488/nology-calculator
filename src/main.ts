@@ -23,8 +23,8 @@ const addToEquation = (stringToAdd: string) => {
   equation += stringToAdd;
 };
 
-const resetEquation = () => {
-  equation = "";
+const resetEquation = (resetString: string = "") => {
+  equation = resetString;
 };
 
 const resetCalculator = () => {
@@ -108,7 +108,6 @@ const evaluateRPN = () => {
     } else stack.push(Number(token));
   });
 
-  equation = stack[0].toString();
   return stack[0];
 };
 
@@ -122,10 +121,13 @@ const handleButtonPress = (event: Event) => {
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
-    resetOutput((evaluateRPN() / 100).toString());
+    const result = (evaluateRPN()/100).toString();
+    resetOutput(result);
+    resetEquation(result);
   } else {
-    resetOutput(evaluateRPN().toString());
-    resetEquation();
+    const result = evaluateRPN().toString();
+    resetOutput(result);
+    resetEquation(result);
   }
 };
 
