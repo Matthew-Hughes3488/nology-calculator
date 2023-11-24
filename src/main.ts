@@ -33,10 +33,6 @@ const resetCalculator = () =>{
     resetOutput();
 }
 
-const evaluateEquation = () => {
-
-}
-
 function getPrecedence(operator: string) {
     switch (operator) {
         case '+':
@@ -120,6 +116,7 @@ const evaluateRPN = () =>{
         stack.push(Number(token));
     })
 
+    equation = stack[0].toString();
     return stack[0];
 }
 
