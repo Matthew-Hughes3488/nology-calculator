@@ -1,11 +1,9 @@
 import "./main.scss";
 
-let equation: string = "";
-let firstNumber: number;
-let secondNumber: number;
-let opperator: string;
+let equation: string = "5.9+3+10";
 
-const digitOrOpperatorRegex = new RegExp(/^[0-9.+\-x÷]$/);
+const digitRegex = new RegExp(/[0-9.]/);
+const opperatorRegex = new RegExp(/[+\-x÷]/);
 
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
@@ -31,16 +29,66 @@ const resetEquation = () =>{
     equation = "";
 }
 
+const resetCalculator = () =>{
+    resetEquation();
+    resetOutput();
+}
+
+const evaluateEquation = () => {
+
+}
+
+function getPrecedence(operator: string) {
+    switch (operator) {
+        case '+':
+        case '-':
+            return 1;
+        case 'x':
+        case '÷':
+            return 2;
+        default:
+            return 0;
+    }
+}
+
+const infixToRPN = (): string => {
+    const tokens = equation.split(/(?=[+x÷-])|(?<=[+x÷-])/g);
+    console.log(tokens)
+
+    if (!tokens || tokens.length === 0) {
+        throw new Error("Error with tokens");
+    }
+
+    // USING SHUNTING YARD ALGO
+    let queue: string[] = [];
+    let stack: string[] = [];
+
+    tokens.forEach(token => {
+        if (digitRegex.test(token)) {
+            queue.push(token);
+        } else if (opperatorRegex.test(token)) {
+            while (stack.length > 0 && getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)) {
+                queue.push(stack.pop()!);
+            }
+            stack.push(token);
+        }
+    });
+    while (stack.length > 0) {
+        queue.push(stack.pop()!);
+    }
+    return queue.join(" ");
+};
+
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
   const buttonInput = input.innerHTML;
 
-  if(digitOrOpperatorRegex.test(buttonInput)){
+  if(digitRegex.test(buttonInput) || opperatorRegex.test(buttonInput)){
     addToOutput(buttonInput);
     addToEquation(buttonInput);
   }
   else if(buttonInput === "C"){
-    console.log("Add reset Calculator function here")
+    resetCalculator();
   }
   else{
     console.log("Add evaluate calculation expression here");
@@ -50,3 +98,6 @@ const handleButtonPress = (event: Event) => {
 buttons.forEach((button) => {
   button.addEventListener("click", handleButtonPress);
 });
+
+console.log(infixToRPN());
+
