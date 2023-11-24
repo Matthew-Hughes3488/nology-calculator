@@ -5,8 +5,7 @@ let firstNumber: number;
 let secondNumber: number;
 let opperator: string;
 
-const digitRegex = new RegExp(/^[0-9 .]$/);
-const operatorRegex = new RegExp(/[+\-x÷=%C]/);
+const digitOrOpperatorRegex = new RegExp(/^[0-9.+\-x÷]$/);
 
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
@@ -24,6 +23,8 @@ const addToOutput = (stringToAdd: string) =>{
 
 const addToEquation = (stringToAdd: string) =>{
     equation += stringToAdd;
+    console.log(equation);
+    
 }
 
 const resetEquation = () =>{
@@ -34,9 +35,15 @@ const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
   const buttonInput = input.innerHTML;
 
-  if(digitRegex.test(buttonInput)){
+  if(digitOrOpperatorRegex.test(buttonInput)){
     addToOutput(buttonInput);
     addToEquation(buttonInput);
+  }
+  else if(buttonInput === "C"){
+    console.log("Add reset Calculator function here")
+  }
+  else{
+    console.log("Add evaluate calculation expression here");
   }
 };
 
