@@ -13,3 +13,22 @@ const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
 const userOutput = document.querySelector(".calculator__output");
 if (!userOutput) throw new Error("Error with query selector");
+
+const resetOutput = (resetString: string = "") =>{
+    userOutput.textContent = resetString;
+}
+
+const addToOutput = (stringToAdd: string) =>{
+    userOutput.textContent += stringToAdd;
+}
+
+const handleButtonPress = (event: Event) => {
+  const input = event.target as HTMLButtonElement;
+  const buttonInput = input.innerHTML;
+
+
+};
+
+buttons.forEach((button) => {
+  button.addEventListener("click", handleButtonPress);
+});
