@@ -4,6 +4,7 @@ let equation: string = "";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
+const brackets = ["(", ")"];
 
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
@@ -46,7 +47,9 @@ function getPrecedence(operator: string) {
 }
 
 const infixToRPN = (): string[] => {
-  const tokens = equation.split(/(?=[+x÷-])|(?<=[+x÷-])/g);
+  const tokens = equation.split(/(?=[+x÷()-])|(?<=[+x÷()-])/g);
+  console.log(tokens);
+  
 
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
@@ -67,8 +70,16 @@ const infixToRPN = (): string[] => {
         queue.push(stack.pop()!);
       }
       stack.push(token);
+    } else if(token === '('){
+      stack.push(token);
+    } else if(token === ")"){
+      while(stack.length > 0 && stack[stack.length - 1] !== "("){
+        queue.push(stack.pop()!)
+      }
+      stack.pop();
     }
   });
+  
   while (stack.length > 0) {
     queue.push(stack.pop()!);
   }
@@ -115,13 +126,17 @@ const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
   const buttonInput = input.innerHTML;
 
-  if (digitRegex.test(buttonInput) || opperatorRegex.test(buttonInput)) {
+  if (
+    digitRegex.test(buttonInput) ||
+    opperatorRegex.test(buttonInput) ||
+    brackets.includes(buttonInput)
+  ) {
     addToOutput(buttonInput);
     addToEquation(buttonInput);
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
-    const result = (evaluateRPN()/100).toString();
+    const result = (evaluateRPN() / 100).toString();
     resetOutput(result);
     resetEquation(result);
   } else {
@@ -129,6 +144,8 @@ const handleButtonPress = (event: Event) => {
     resetOutput(result);
     resetEquation(result);
   }
+  console.log(equation);
+  
 };
 
 buttons.forEach((button) => {
