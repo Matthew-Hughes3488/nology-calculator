@@ -1,6 +1,6 @@
 import "./main.scss";
 
-let equation: string = "5.9+3+10";
+let equation: string = "";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
@@ -21,7 +21,6 @@ const addToOutput = (stringToAdd: string) =>{
 
 const addToEquation = (stringToAdd: string) =>{
     equation += stringToAdd;
-    console.log(equation);
     
 }
 
@@ -53,7 +52,6 @@ function getPrecedence(operator: string) {
 
 const infixToRPN = (): string[] => {
     const tokens = equation.split(/(?=[+x÷-])|(?<=[+x÷-])/g);
-    console.log(tokens)
 
     if (!tokens || tokens.length === 0) {
         throw new Error("Error with tokens");
@@ -81,7 +79,7 @@ const infixToRPN = (): string[] => {
 
 const evaluateRPN = () =>{
     const tokens = infixToRPN();
-    
+
     let stack: number[] = [];
 
     tokens.forEach(token =>{
@@ -137,12 +135,11 @@ const handleButtonPress = (event: Event) => {
     resetCalculator();
   }
   else{
-    console.log("Add evaluate calculation expression here");
+    resetOutput(evaluateRPN().toString());
+    resetEquation();
   }
 };
 
 buttons.forEach((button) => {
   button.addEventListener("click", handleButtonPress);
 });
-
-console.log(infixToRPN());
