@@ -134,6 +134,9 @@ const handleButtonPress = (event: Event) => {
   else if(buttonInput === "C"){
     resetCalculator();
   }
+  else if(buttonInput === "%"){
+    resetOutput((evaluateRPN()/100).toString());
+  }
   else{
     resetOutput(evaluateRPN().toString());
     resetEquation();
