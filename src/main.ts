@@ -22,11 +22,22 @@ const addToOutput = (stringToAdd: string) =>{
     userOutput.textContent += stringToAdd;
 }
 
+const addToEquation = (stringToAdd: string) =>{
+    equation += stringToAdd;
+}
+
+const resetEquation = () =>{
+    equation = "";
+}
+
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
   const buttonInput = input.innerHTML;
 
-
+  if(digitRegex.test(buttonInput)){
+    addToOutput(buttonInput);
+    addToEquation(buttonInput);
+  }
 };
 
 buttons.forEach((button) => {
