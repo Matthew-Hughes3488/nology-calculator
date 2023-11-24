@@ -51,7 +51,7 @@ function getPrecedence(operator: string) {
     }
 }
 
-const infixToRPN = (): string => {
+const infixToRPN = (): string[] => {
     const tokens = equation.split(/(?=[+x÷-])|(?<=[+x÷-])/g);
     console.log(tokens)
 
@@ -76,8 +76,54 @@ const infixToRPN = (): string => {
     while (stack.length > 0) {
         queue.push(stack.pop()!);
     }
-    return queue.join(" ");
-};
+    return queue;
+}
+
+const evaluateRPN = () =>{
+    const tokens = infixToRPN();
+    
+    let stack: number[] = [];
+
+    tokens.forEach(token =>{
+        if(token === '+'){
+            const number1 = stack.pop();
+            const number2 = stack.pop();
+            if(!number1 || !number2) 
+                throw new Error("Error with stack")
+            
+            stack.push(number1+number2)
+        }
+        else if(token === '-'){
+            const number1 = stack.pop();
+            const number2 = stack.pop();
+            if(!number1 || !number2) 
+                throw new Error("Error with stack")
+
+            stack.push(number2 - number1);
+        }
+        else if(token === 'x'){
+            const number1 = stack.pop();
+            const number2 = stack.pop();
+            if(!number1 || !number2) 
+                throw new Error("Error with stack")
+
+            stack.push(number1 * number2);
+
+        }
+        else if(token === '÷'){
+            const number1 = stack.pop();
+            const number2 = stack.pop();
+            if(!number1 || !number2) 
+                throw new Error("Error with stack")
+            
+            stack.push(number2 / number1)
+        }
+    else 
+        stack.push(Number(token));
+    })
+
+    return stack[0];
+}
 
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
@@ -100,4 +146,3 @@ buttons.forEach((button) => {
 });
 
 console.log(infixToRPN());
-
