@@ -21,7 +21,13 @@ const addToUserOutput = (update: string) => {
 
 const addToEquation = (charToAdd: string) => {
   equation += charToAdd;
+  console.log(equation);
+  
 };
+
+const clearEquation = () =>{
+    equation = "";
+}
 
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
