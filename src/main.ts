@@ -10,8 +10,14 @@ const brackets = ["(", ")"];
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
-const userOutput = document.querySelector(".calculator__output");
+const userOutput = document.querySelector<HTMLHeadElement>(".calculator__output");
 if (!userOutput) throw new Error("Error with query selector");
+const guardImage = document.querySelector<HTMLImageElement>("#Guard");
+if (!guardImage) throw new Error("Error with query selector");
+const guardAudio = document.querySelector<HTMLAudioElement>("#Stop");
+if (!guardAudio) throw new Error("Error with query selector");
+const main = document.querySelector<HTMLElement>(".calculator");
+if (!main) throw new Error("Error with query selector");
 
 const resetOutput = (resetString: string = "") => {
   userOutput.textContent = resetString;
@@ -33,6 +39,15 @@ const resetCalculator = () => {
   resetEquation();
   resetOutput();
 };
+
+const divideByZero = () =>{
+  if(equation.includes("÷0")){
+    guardAudio.play();
+  }
+  guardImage.style.display = "unset"
+  guardImage.style.zIndex = "10"
+  main.style.display = "none"
+}
 
 function getPrecedence(operator: string) {
   switch (operator) {
@@ -95,6 +110,7 @@ const infixToRPN = (): string[] => {
 };
 
 const evaluateRPN = () => {
+  divideByZero();
   const tokens = infixToRPN();
   console.log(tokens);
 
