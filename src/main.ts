@@ -40,7 +40,7 @@ const resetCalculator = () => {
   resetOutput();
 };
 
-const divideByZero = () =>{
+const divideByZeroCheck = () =>{
   if(equation.includes("÷0")){
     guardAudio.play();
   }
@@ -110,7 +110,7 @@ const infixToRPN = (): string[] => {
 };
 
 const evaluateRPN = () => {
-  divideByZero();
+  divideByZeroCheck();
   const tokens = infixToRPN();
   console.log(tokens);
 
