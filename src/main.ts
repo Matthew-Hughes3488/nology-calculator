@@ -4,6 +4,7 @@ let equation: string = "";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
+const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
@@ -133,7 +134,11 @@ const handleButtonPress = (event: Event) => {
   ) {
     addToOutput(buttonInput);
     addToEquation(buttonInput);
-  } else if (buttonInput === "C") {
+  } else if(trigRegex.test(buttonInput)){
+    addToOutput(`${buttonInput}(`)
+    addToEquation(`${buttonInput}(`)
+  }
+  else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
     const result = (evaluateRPN() / 100).toString();
