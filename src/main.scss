@@ -9,10 +9,14 @@
 }
 
 body{
-    background-color: $color-black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: grey;
+    width: 100vw;
+    height: 100vh;
 }
 
 main{
-    max-width: 320px;
-    max-height: 568px;
+    background-color: $color-black;
 }
