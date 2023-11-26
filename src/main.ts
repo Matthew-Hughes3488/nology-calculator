@@ -43,10 +43,10 @@ const resetCalculator = () => {
 const divideByZeroCheck = () =>{
   if(equation.includes("÷0")){
     guardAudio.play();
+    guardImage.style.display = "unset"
+    guardImage.style.zIndex = "10"
+    main.style.display = "none"
   }
-  guardImage.style.display = "unset"
-  guardImage.style.zIndex = "10"
-  main.style.display = "none"
 }
 
 function getPrecedence(operator: string) {
