@@ -4,6 +4,7 @@ let equation: string = "";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
+const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
 // FETCHING AND VALIDATING ALL NEEDED ELEMENTS
@@ -41,15 +42,20 @@ function getPrecedence(operator: string) {
     case "x":
     case "÷":
       return 2;
+    case "sin":
+    case "cos":
+    case "tan":
+      return 3;
     default:
       return 0;
   }
 }
 
 const infixToRPN = (): string[] => {
-  const tokens = equation.split(/(?=[+x÷()-])|(?<=[+x÷()-])/g);
+  const tokens = equation.split(
+    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
+  );
   console.log(tokens);
-  
 
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
@@ -70,16 +76,18 @@ const infixToRPN = (): string[] => {
         queue.push(stack.pop()!);
       }
       stack.push(token);
-    } else if(token === '('){
+    } else if (token === "(") {
       stack.push(token);
-    } else if(token === ")"){
-      while(stack.length > 0 && stack[stack.length - 1] !== "("){
-        queue.push(stack.pop()!)
+    } else if (token === ")") {
+      while (stack.length > 0 && stack[stack.length - 1] !== "(") {
+        queue.push(stack.pop()!);
       }
       stack.pop();
+    } else if (trigRegex.test(token)) {
+      stack.push(token);
     }
   });
-  
+
   while (stack.length > 0) {
     queue.push(stack.pop()!);
   }
@@ -88,6 +96,7 @@ const infixToRPN = (): string[] => {
 
 const evaluateRPN = () => {
   const tokens = infixToRPN();
+  console.log(tokens);
 
   let stack: number[] = [];
 
@@ -116,6 +125,21 @@ const evaluateRPN = () => {
       if (!number1 || !number2) throw new Error("Error with stack");
 
       stack.push(number2 / number1);
+    } else if (token === "sin") {
+      const number1 = stack.pop();
+      if (!number1) throw new Error("Error with stack");
+
+      stack.push(Math.sin(number1));
+    } else if (token === "cos") {
+      const number1 = stack.pop();
+      if (!number1) throw new Error("Error with stack");
+
+      stack.push(Math.cos(number1));
+    } else if (token === "tan") {
+      const number1 = stack.pop();
+      if (!number1) throw new Error("Error with stack");
+
+      stack.push(Math.tan(number1));
     } else stack.push(Number(token));
   });
 
@@ -133,6 +157,9 @@ const handleButtonPress = (event: Event) => {
   ) {
     addToOutput(buttonInput);
     addToEquation(buttonInput);
+  } else if (trigRegex.test(buttonInput)) {
+    addToOutput(`${buttonInput}(`);
+    addToEquation(`${buttonInput}(`);
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
@@ -145,7 +172,6 @@ const handleButtonPress = (event: Event) => {
     resetEquation(result);
   }
   console.log(equation);
-  
 };
 
 buttons.forEach((button) => {
