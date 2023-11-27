@@ -73,7 +73,7 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
       }
     }
   }
-  
+
   return modifiedExpression;
 };
 
@@ -148,10 +148,10 @@ const evaluateRPN = () => {
   let stack: number[] = [];
 
   tokens.forEach((token) => {
-    const number1 = stack.pop();
-    const number2 = stack.pop();
-
+    
     if (token === "+") {
+      const number1 = stack.pop();
+      const number2 = stack.pop();
       if (!number1 || !number2) throw new Error("Error with stack");
 
       stack.push(number1 + number2);
