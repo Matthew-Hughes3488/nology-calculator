@@ -7,10 +7,12 @@ const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
-// FETCHING AND VALIDATING ALL NEEDED ELEMENTS
+//FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
-const userOutput = document.querySelector<HTMLHeadElement>(".calculator__output");
+const userOutput = document.querySelector<HTMLHeadElement>(
+  ".calculator__output"
+);
 if (!userOutput) throw new Error("Error with query selector");
 const guardImage = document.querySelector<HTMLImageElement>("#Guard");
 if (!guardImage) throw new Error("Error with query selector");
@@ -40,14 +42,40 @@ const resetCalculator = () => {
   resetOutput();
 };
 
-const divideByZeroCheck = () =>{
-  if(equation.includes("÷0")){
+//CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
+const divideByZeroCheck = () => {
+  if (equation.includes("÷0")) {
     guardAudio.play();
-    guardImage.style.display = "unset"
-    guardImage.style.zIndex = "10"
-    main.style.display = "none"
+    guardImage.style.display = "unset";
+    guardImage.style.zIndex = "10";
+    main.style.display = "none";
   }
-}
+};
+
+//TAKES AN ARRAY AND REPLACES DOUBLE NEGATIVES WITH A PLUS SIGN, THEN RETURNS A NEW ARRAY.
+const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
+  const modifiedExpression = [];
+
+  for (let i = 0; i < infixExpression.length; i++) {
+    const token = infixExpression[i];
+
+    if (token !== "-") {
+      modifiedExpression.push(token);
+    }
+    else {
+      if (infixExpression[i + 1] === "-") {
+        modifiedExpression.push("+");
+        //SKIP THE NEXT TOKEN
+        i++;
+      }
+      else{
+        modifiedExpression.push(token)
+      }
+    }
+  }
+
+  return modifiedExpression;
+};
 
 function getPrecedence(operator: string) {
   switch (operator) {
@@ -66,12 +94,7 @@ function getPrecedence(operator: string) {
   }
 }
 
-const infixToRPN = (): string[] => {
-  const tokens = equation.split(
-    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
-  );
-  console.log(tokens);
-
+const infixToRPN = (tokens :string[]): string[] => {
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
   }
@@ -84,6 +107,7 @@ const infixToRPN = (): string[] => {
     if (digitRegex.test(token)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
+      //EMPTY STACK OF OPPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN, THEN ADD TOKEN
       while (
         stack.length > 0 &&
         getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
@@ -94,9 +118,11 @@ const infixToRPN = (): string[] => {
     } else if (token === "(") {
       stack.push(token);
     } else if (token === ")") {
+      //EMPTY STACK OF ALL OPPERATORS UNTIL A LEFT BRACKET IS ENCOUNTERED
       while (stack.length > 0 && stack[stack.length - 1] !== "(") {
         queue.push(stack.pop()!);
       }
+      //REMOVE LEFT BRACKET
       stack.pop();
     } else if (trigRegex.test(token)) {
       stack.push(token);
@@ -109,14 +135,11 @@ const infixToRPN = (): string[] => {
   return queue;
 };
 
-const evaluateRPN = () => {
-  divideByZeroCheck();
-  const tokens = infixToRPN();
-  console.log(tokens);
-
+const evaluateRPN = (tokens : string[]) : number =>  {
   let stack: number[] = [];
 
   tokens.forEach((token) => {
+    
     if (token === "+") {
       const number1 = stack.pop();
       const number2 = stack.pop();
@@ -156,11 +179,23 @@ const evaluateRPN = () => {
       if (!number1) throw new Error("Error with stack");
 
       stack.push(Math.tan(number1));
+      //PUSH TOKEN TO STACK IF IT'S AN OPPERAND
     } else stack.push(Number(token));
   });
 
   return stack[0];
 };
+
+const processCalculation = () : number => {
+  divideByZeroCheck();
+  const equationArr = equation.split(
+    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
+  );
+  const replacedNegatives = replaceDoubleNegatives(equationArr)
+  const reversePolishNotationArr = infixToRPN(replacedNegatives);
+
+  return(evaluateRPN(reversePolishNotationArr));
+}
 
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
@@ -179,11 +214,11 @@ const handleButtonPress = (event: Event) => {
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
-    const result = (evaluateRPN() / 100).toString();
+    const result = (processCalculation() / 100).toString();
     resetOutput(result);
     resetEquation(result);
   } else {
-    const result = evaluateRPN().toString();
+    const result = processCalculation().toString();
     resetOutput(result);
     resetEquation(result);
   }
@@ -193,3 +228,4 @@ const handleButtonPress = (event: Event) => {
 buttons.forEach((button) => {
   button.addEventListener("click", handleButtonPress);
 });
+
