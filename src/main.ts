@@ -1,7 +1,5 @@
 import "./main.scss";
 
-let equation: string = "";
-
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
@@ -29,22 +27,13 @@ const addToOutput = (stringToAdd: string) => {
   userOutput.textContent += stringToAdd;
 };
 
-const addToEquation = (stringToAdd: string) => {
-  equation += stringToAdd;
-};
-
-const resetEquation = (resetString: string = "") => {
-  equation = resetString;
-};
-
 const resetCalculator = () => {
-  resetEquation();
   resetOutput();
 };
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
-  if (equation.includes("÷0")) {
+  if (userOutput.innerText.includes("÷0")) {
     guardAudio.play();
     guardImage.style.display = "unset";
     guardImage.style.zIndex = "10";
@@ -62,7 +51,7 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
     if (token !== "-") {
       modifiedExpression.push(token);
     }
-    else {
+    else { //IF A '-' IS ECOUNTERED, CHECK THE NEXT TOKEN FOR ANOTHER '-'
       if (infixExpression[i + 1] === "-") {
         modifiedExpression.push("+");
         //SKIP THE NEXT TOKEN
@@ -77,6 +66,8 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
   return modifiedExpression;
 };
 
+//DEFINES THE PRECEDENCE FOR EACH MATHEMATICAL OPPERATOR
+//THE HIGHER THE NUMBER THE HIGHER THE PRESEDENCE
 function getPrecedence(operator: string) {
   switch (operator) {
     case "+":
@@ -94,6 +85,8 @@ function getPrecedence(operator: string) {
   }
 }
 
+//CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
+// I.E. 5 + 3 --> 5 3 +
 const infixToRPN = (tokens :string[]): string[] => {
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
@@ -135,6 +128,7 @@ const infixToRPN = (tokens :string[]): string[] => {
   return queue;
 };
 
+//TAKES AN EQUATION IN REVERSE POLISH NOTATION AND RETURNS ITS RESULT
 const evaluateRPN = (tokens : string[]) : number =>  {
   let stack: number[] = [];
 
@@ -188,7 +182,9 @@ const evaluateRPN = (tokens : string[]) : number =>  {
 
 const processCalculation = () : number => {
   divideByZeroCheck();
-  const equationArr = equation.split(
+  //SPLITS THE USERS INPUT INTO AN ARRAY, THEN REPLACES DOUBLE NEGATIVES, 
+  //THEN COVERTS IT INTO REVERSE POLISH NOTATION
+  const equationArr = userOutput.innerText.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
   );
   const replacedNegatives = replaceDoubleNegatives(equationArr)
@@ -198,34 +194,29 @@ const processCalculation = () : number => {
 }
 
 const handleButtonPress = (event: Event) => {
-  const input = event.target as HTMLButtonElement;
-  const buttonInput = input.innerHTML;
+  const button = event.target as HTMLButtonElement;
+  const input = button.innerHTML;
 
   if (
-    digitRegex.test(buttonInput) ||
-    opperatorRegex.test(buttonInput) ||
-    brackets.includes(buttonInput)
+    digitRegex.test(input) ||
+    opperatorRegex.test(input) ||
+    brackets.includes(input)
   ) {
-    addToOutput(buttonInput);
-    addToEquation(buttonInput);
-  } else if (trigRegex.test(buttonInput)) {
-    addToOutput(`${buttonInput}(`);
-    addToEquation(`${buttonInput}(`);
-  } else if (buttonInput === "C") {
+    addToOutput(input);
+  } else if (trigRegex.test(input)) {
+    addToOutput(`${input}(`);
+  } else if (input === "C") {
     resetCalculator();
-  } else if (buttonInput === "%") {
+  } else if (input === "%") {
     const result = (processCalculation() / 100).toString();
     resetOutput(result);
-    resetEquation(result);
-  } else {
+  } else { // FINAL CASE THE INPUT IS "="
     const result = processCalculation().toString();
     resetOutput(result);
-    resetEquation(result);
+    
   }
-  console.log(equation);
 };
 
 buttons.forEach((button) => {
   button.addEventListener("click", handleButtonPress);
 });
-
