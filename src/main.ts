@@ -7,7 +7,7 @@ const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
-// FETCHING AND VALIDATING ALL NEEDED ELEMENTS
+//FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
 const userOutput = document.querySelector<HTMLHeadElement>(
@@ -65,7 +65,7 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
     else {
       if (infixExpression[i + 1] === "-") {
         modifiedExpression.push("+");
-        // SKIP THE NEXT TOKEN
+        //SKIP THE NEXT TOKEN
         i++;
       }
       else{
@@ -94,11 +94,7 @@ function getPrecedence(operator: string) {
   }
 }
 
-const infixToRPN = (): string[] => {
-  const tokens = equation.split(
-    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
-  );
-
+const infixToRPN = (tokens :string[]): string[] => {
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
   }
@@ -141,8 +137,13 @@ const infixToRPN = (): string[] => {
 
 const evaluateRPN = () => {
   divideByZeroCheck();
+  const equationArr = equation.split(
+    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
+  );
+
+  const replacedNegatives = replaceDoubleNegatives(equationArr)
   
-  const tokens = infixToRPN();
+  const tokens = infixToRPN(replacedNegatives);
   console.log(tokens);
 
   let stack: number[] = [];
@@ -188,7 +189,7 @@ const evaluateRPN = () => {
       if (!number1) throw new Error("Error with stack");
 
       stack.push(Math.tan(number1));
-      // PUSH TOKEN TO STACK IF IT'S AN OPPERAND
+      //PUSH TOKEN TO STACK IF IT'S AN OPPERAND
     } else stack.push(Number(token));
   });
 
