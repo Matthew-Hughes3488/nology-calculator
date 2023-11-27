@@ -135,17 +135,7 @@ const infixToRPN = (tokens :string[]): string[] => {
   return queue;
 };
 
-const evaluateRPN = () => {
-  divideByZeroCheck();
-  const equationArr = equation.split(
-    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
-  );
-
-  const replacedNegatives = replaceDoubleNegatives(equationArr)
-  
-  const tokens = infixToRPN(replacedNegatives);
-  console.log(tokens);
-
+const evaluateRPN = (tokens : string[]) : number =>  {
   let stack: number[] = [];
 
   tokens.forEach((token) => {
@@ -195,6 +185,18 @@ const evaluateRPN = () => {
 
   return stack[0];
 };
+
+const processCalculation = () : number => {
+  divideByZeroCheck();
+
+  const equationArr = equation.split(
+    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
+  );
+  const replacedNegatives = replaceDoubleNegatives(equationArr)
+  const reversePolishNotationArr = infixToRPN(replacedNegatives);
+
+  return(evaluateRPN(reversePolishNotationArr));
+}
 
 const handleButtonPress = (event: Event) => {
   const input = event.target as HTMLButtonElement;
