@@ -51,7 +51,7 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
     if (token !== "-") {
       modifiedExpression.push(token);
     }
-    else {
+    else { //IF A '-' IS ECOUNTERED, CHECK THE NEXT TOKEN FOR ANOTHER '-'
       if (infixExpression[i + 1] === "-") {
         modifiedExpression.push("+");
         //SKIP THE NEXT TOKEN
@@ -210,7 +210,7 @@ const handleButtonPress = (event: Event) => {
   } else if (input === "%") {
     const result = (processCalculation() / 100).toString();
     resetOutput(result);
-  } else {
+  } else { // FINAL CASE THE INPUT IS "="
     const result = processCalculation().toString();
     resetOutput(result);
     
