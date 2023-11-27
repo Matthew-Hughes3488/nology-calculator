@@ -133,9 +133,16 @@ const evaluateRPN = () => {
     } else if (token === "-") {
       const number1 = stack.pop();
       const number2 = stack.pop();
-      if (!number1 || !number2) throw new Error("Error with stack");
-
-      stack.push(number2 - number1);
+      if (!number1 && number2) {
+        // If there's only one number, it's a negative sign
+        stack.push(-number2);
+      } else if (!number2 && number1) {
+        // If there's no number before '-', it's subtraction
+        stack.push(number1);
+      } else {
+        if(!number1 || !number2) throw new Error("Error with the stack")
+        stack.push(number2 - number1);
+      }
     } else if (token === "x") {
       const number1 = stack.pop();
       const number2 = stack.pop();
