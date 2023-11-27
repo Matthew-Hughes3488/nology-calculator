@@ -48,6 +48,13 @@ const divideByZeroCheck = () =>{
     main.style.display = "none"
   }
 }
+//CHECKS IF THE '-' SIGN AT INDEX IS REFERING TO A NEGTIVE NUMBER OR A '-' OPPERAND
+const isNegativeSign = (index: number): boolean => {
+  return (
+    equation[index] === '-' &&
+    (index === 0 || opperatorRegex.test(equation[index - 1]) || equation[index - 1] === '(')
+  );
+};
 
 function getPrecedence(operator: string) {
   switch (operator) {
@@ -80,8 +87,8 @@ const infixToRPN = (): string[] => {
   let queue: string[] = [];
   let stack: string[] = [];
 
-  tokens.forEach((token) => {
-    if (digitRegex.test(token)) {
+  tokens.forEach((token, index) => {
+    if (digitRegex.test(token) || isNegativeSign(index)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
       while (
