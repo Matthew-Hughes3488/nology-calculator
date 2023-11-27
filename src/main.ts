@@ -100,7 +100,8 @@ const infixToRPN = (tokens :string[]): string[] => {
     if (digitRegex.test(token)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
-      //EMPTY STACK OF OPPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN, THEN ADD TOKEN
+      //EMPTY STACK OF OPPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN, 
+      //THEN ADD TOKEN TO THE STACK
       while (
         stack.length > 0 &&
         getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
