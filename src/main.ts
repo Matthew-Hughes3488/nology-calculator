@@ -140,6 +140,7 @@ const infixToRPN = (): string[] => {
 
 const evaluateRPN = () => {
   divideByZeroCheck();
+  
   const tokens = infixToRPN();
   console.log(tokens);
 
