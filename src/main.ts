@@ -66,6 +66,8 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
   return modifiedExpression;
 };
 
+//DEFINES THE PRECEDENCE FOR EACH MATHEMATICAL OPPERATOR
+//THE HIGHER THE NUMBER THE HIGHER THE PRESEDENCE
 function getPrecedence(operator: string) {
   switch (operator) {
     case "+":
@@ -83,6 +85,8 @@ function getPrecedence(operator: string) {
   }
 }
 
+//CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
+// I.E. 5 + 3 --> 5 3 +
 const infixToRPN = (tokens :string[]): string[] => {
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
@@ -124,6 +128,7 @@ const infixToRPN = (tokens :string[]): string[] => {
   return queue;
 };
 
+//TAKES AN EQUATION IN REVERSE POLISH NOTATION AND RETURNS ITS RESULT
 const evaluateRPN = (tokens : string[]) : number =>  {
   let stack: number[] = [];
 
@@ -177,6 +182,8 @@ const evaluateRPN = (tokens : string[]) : number =>  {
 
 const processCalculation = () : number => {
   divideByZeroCheck();
+  //SPLITS THE USERS INPUT INTO AN ARRAY, THEN REPLACES DOUBLE NEGATIVES, 
+  //THEN COVERTS IT INTO REVERSE POLISH NOTATION
   const equationArr = userOutput.innerText.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
   );
@@ -187,20 +194,20 @@ const processCalculation = () : number => {
 }
 
 const handleButtonPress = (event: Event) => {
-  const input = event.target as HTMLButtonElement;
-  const buttonInput = input.innerHTML;
+  const button = event.target as HTMLButtonElement;
+  const input = button.innerHTML;
 
   if (
-    digitRegex.test(buttonInput) ||
-    opperatorRegex.test(buttonInput) ||
-    brackets.includes(buttonInput)
+    digitRegex.test(input) ||
+    opperatorRegex.test(input) ||
+    brackets.includes(input)
   ) {
-    addToOutput(buttonInput);
-  } else if (trigRegex.test(buttonInput)) {
-    addToOutput(`${buttonInput}(`);
-  } else if (buttonInput === "C") {
+    addToOutput(input);
+  } else if (trigRegex.test(input)) {
+    addToOutput(`${input}(`);
+  } else if (input === "C") {
     resetCalculator();
-  } else if (buttonInput === "%") {
+  } else if (input === "%") {
     const result = (processCalculation() / 100).toString();
     resetOutput(result);
   } else {
