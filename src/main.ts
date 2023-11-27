@@ -73,6 +73,7 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
       }
     }
   }
+  
   return modifiedExpression;
 };
 
