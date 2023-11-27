@@ -228,4 +228,3 @@ const handleButtonPress = (event: Event) => {
 buttons.forEach((button) => {
   button.addEventListener("click", handleButtonPress);
 });
-
