@@ -1,7 +1,5 @@
 import "./main.scss";
 
-let equation: string = "";
-
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
@@ -29,22 +27,13 @@ const addToOutput = (stringToAdd: string) => {
   userOutput.textContent += stringToAdd;
 };
 
-const addToEquation = (stringToAdd: string) => {
-  equation += stringToAdd;
-};
-
-const resetEquation = (resetString: string = "") => {
-  equation = resetString;
-};
-
 const resetCalculator = () => {
-  resetEquation();
   resetOutput();
 };
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
-  if (equation.includes("÷0")) {
+  if (userOutput.innerText.includes("÷0")) {
     guardAudio.play();
     guardImage.style.display = "unset";
     guardImage.style.zIndex = "10";
@@ -188,7 +177,7 @@ const evaluateRPN = (tokens : string[]) : number =>  {
 
 const processCalculation = () : number => {
   divideByZeroCheck();
-  const equationArr = equation.split(
+  const equationArr = userOutput.innerText.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
   );
   const replacedNegatives = replaceDoubleNegatives(equationArr)
@@ -207,22 +196,18 @@ const handleButtonPress = (event: Event) => {
     brackets.includes(buttonInput)
   ) {
     addToOutput(buttonInput);
-    addToEquation(buttonInput);
   } else if (trigRegex.test(buttonInput)) {
     addToOutput(`${buttonInput}(`);
-    addToEquation(`${buttonInput}(`);
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
     const result = (processCalculation() / 100).toString();
     resetOutput(result);
-    resetEquation(result);
   } else {
     const result = processCalculation().toString();
     resetOutput(result);
-    resetEquation(result);
+    
   }
-  console.log(equation);
 };
 
 buttons.forEach((button) => {
