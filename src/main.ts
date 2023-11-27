@@ -188,7 +188,6 @@ const evaluateRPN = (tokens : string[]) : number =>  {
 
 const processCalculation = () : number => {
   divideByZeroCheck();
-
   const equationArr = equation.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
   );
@@ -215,11 +214,11 @@ const handleButtonPress = (event: Event) => {
   } else if (buttonInput === "C") {
     resetCalculator();
   } else if (buttonInput === "%") {
-    const result = (evaluateRPN() / 100).toString();
+    const result = (processCalculation() / 100).toString();
     resetOutput(result);
     resetEquation(result);
   } else {
-    const result = evaluateRPN().toString();
+    const result = processCalculation().toString();
     resetOutput(result);
     resetEquation(result);
   }
