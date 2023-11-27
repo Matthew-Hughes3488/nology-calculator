@@ -96,7 +96,9 @@ const infixToRPN = (tokens :string[]): string[] => {
   let queue: string[] = [];
   let stack: string[] = [];
 
-  tokens.forEach((token) => {
+  for(let i = 0; i < tokens.length; i++){
+    const token = tokens[i];
+    
     if (digitRegex.test(token)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
@@ -121,7 +123,8 @@ const infixToRPN = (tokens :string[]): string[] => {
     } else if (trigRegex.test(token)) {
       stack.push(token);
     }
-  });
+  }
+ 
 
   while (stack.length > 0) {
     queue.push(stack.pop()!);
