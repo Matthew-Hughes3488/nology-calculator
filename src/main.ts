@@ -5,9 +5,11 @@ const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
+
 //FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
+
 const userOutput = document.querySelector<HTMLHeadElement>(
   ".calculator__output"
 );
@@ -109,6 +111,17 @@ const handleClosingParenthesis = (
   stack.pop();
 };
 
+const isNegativeNumber = (index: number, tokens: string[]): boolean => {
+  // Check if the current token is a minus sign and if it is either the first character,
+  // or it follows an operator or an opening parenthesis
+  return (
+    tokens[index] === "-" &&
+    (index === 0 ||
+      opperatorRegex.test(tokens[index - 1]) ||
+      tokens[index - 1] === "(")
+  );
+};
+
 //CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
 // I.E. 5 + 3 --> 5 3 +
 const infixToRPN = (tokens: string[]): string[] => {
@@ -122,8 +135,10 @@ const infixToRPN = (tokens: string[]): string[] => {
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
-
-    if (digitRegex.test(token)) {
+    if(isNegativeNumber(i, tokens)){
+      const negativeNumber = `-${tokens[++i]}`;
+      queue.push(negativeNumber);
+    }else if (digitRegex.test(token)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
       handleOperator(token, stack, queue);
@@ -139,6 +154,7 @@ const infixToRPN = (tokens: string[]): string[] => {
   while (stack.length > 0) {
     queue.push(stack.pop()!);
   }
+  
   return queue;
 };
 
@@ -196,7 +212,7 @@ const evaluateRPN = (tokens: string[]): number => {
 //EVALUATES THE USERS INPUT AND RETURNS THE RESULT
 const processCalculation = (): number => {
   divideByZeroCheck();
-  
+
   //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
   //THEN COVERTS IT INTO REVERSE POLISH NOTATION
   const equationArr = userOutput.innerText.split(
