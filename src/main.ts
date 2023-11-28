@@ -5,9 +5,11 @@ const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
+
 //FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
+
 const userOutput = document.querySelector<HTMLHeadElement>(
   ".calculator__output"
 );
@@ -41,7 +43,7 @@ const divideByZeroCheck = () => {
   }
 };
 
-//TAKES AN ARRAY AND REPLACES DOUBLE NEGATIVES WITH A PLUS SIGN, THEN RETURNS A NEW ARRAY.
+//TAKES AN ARRAY AND REPLACES DOUBLE NEGATIVES WITH A PLUS SIGN, THEN RETURNS A NEW ARRAY
 const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
   const modifiedExpression = [];
 
@@ -50,15 +52,14 @@ const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
 
     if (token !== "-") {
       modifiedExpression.push(token);
-    }
-    else { //IF A '-' IS ECOUNTERED, CHECK THE NEXT TOKEN FOR ANOTHER '-'
+    } else {
+      //IF A '-' IS ECOUNTERED, CHECK THE NEXT TOKEN FOR ANOTHER '-'
       if (infixExpression[i + 1] === "-") {
         modifiedExpression.push("+");
         //SKIP THE NEXT TOKEN
         i++;
-      }
-      else{
-        modifiedExpression.push(token)
+      } else {
+        modifiedExpression.push(token);
       }
     }
   }
@@ -85,9 +86,45 @@ function getPrecedence(operator: string) {
   }
 }
 
+const handleOperator = (token: string, stack: string[], queue: string[]) => {
+  //EMPTY STACK OF OPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN,
+  //THEN ADD TOKEN TO THE STACK
+  while (
+    stack.length > 0 &&
+    getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
+  ) {
+    queue.push(stack.pop()!);
+  }
+  stack.push(token);
+};
+
+const handleClosingParenthesis = (
+  token: string,
+  stack: string[],
+  queue: string[]
+) => {
+  //EMPTY STACK OF ALL OPPERATORS UNTIL A LEFT BRACKET IS ENCOUNTERED
+  while (stack.length > 0 && stack[stack.length - 1] !== "(") {
+    queue.push(stack.pop()!);
+  }
+  //REMOVE LEFT BRACKET
+  stack.pop();
+};
+
+const isNegativeNumber = (index: number, tokens: string[]): boolean => {
+  // Check if the current token is a minus sign and if it is either the first character,
+  // or it follows an operator or an opening parenthesis
+  return (
+    tokens[index] === "-" &&
+    (index === 0 ||
+      opperatorRegex.test(tokens[index - 1]) ||
+      tokens[index - 1] === "(")
+  );
+};
+
 //CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
 // I.E. 5 + 3 --> 5 3 +
-const infixToRPN = (tokens :string[]): string[] => {
+const infixToRPN = (tokens: string[]): string[] => {
   if (!tokens || tokens.length === 0) {
     throw new Error("Error with tokens");
   }
@@ -96,45 +133,36 @@ const infixToRPN = (tokens :string[]): string[] => {
   let queue: string[] = [];
   let stack: string[] = [];
 
-  tokens.forEach((token) => {
-    if (digitRegex.test(token)) {
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if(isNegativeNumber(i, tokens)){
+      const negativeNumber = `-${tokens[++i]}`;
+      queue.push(negativeNumber);
+    }else if (digitRegex.test(token)) {
       queue.push(token);
     } else if (opperatorRegex.test(token)) {
-      //EMPTY STACK OF OPPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN, 
-      //THEN ADD TOKEN TO THE STACK
-      while (
-        stack.length > 0 &&
-        getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
-      ) {
-        queue.push(stack.pop()!);
-      }
-      stack.push(token);
+      handleOperator(token, stack, queue);
     } else if (token === "(") {
       stack.push(token);
     } else if (token === ")") {
-      //EMPTY STACK OF ALL OPPERATORS UNTIL A LEFT BRACKET IS ENCOUNTERED
-      while (stack.length > 0 && stack[stack.length - 1] !== "(") {
-        queue.push(stack.pop()!);
-      }
-      //REMOVE LEFT BRACKET
-      stack.pop();
+      handleClosingParenthesis(token, stack, queue);
     } else if (trigRegex.test(token)) {
       stack.push(token);
     }
-  });
+  }
 
   while (stack.length > 0) {
     queue.push(stack.pop()!);
   }
+  
   return queue;
 };
 
 //TAKES AN EQUATION IN REVERSE POLISH NOTATION AND RETURNS ITS RESULT
-const evaluateRPN = (tokens : string[]) : number =>  {
+const evaluateRPN = (tokens: string[]): number => {
   let stack: number[] = [];
 
   tokens.forEach((token) => {
-    
     if (token === "+") {
       const number1 = stack.pop();
       const number2 = stack.pop();
@@ -174,25 +202,27 @@ const evaluateRPN = (tokens : string[]) : number =>  {
       if (!number1) throw new Error("Error with stack");
 
       stack.push(Math.tan(number1));
-      //PUSH TOKEN TO STACK IF IT'S AN OPPERAND
+      //PUSH TOKEN TO STACK IF IT'S AN OPERAND
     } else stack.push(Number(token));
   });
 
   return stack[0];
 };
 
-const processCalculation = () : number => {
+//EVALUATES THE USERS INPUT AND RETURNS THE RESULT
+const processCalculation = (): number => {
   divideByZeroCheck();
-  //SPLITS THE USERS INPUT INTO AN ARRAY, THEN REPLACES DOUBLE NEGATIVES, 
+
+  //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
   //THEN COVERTS IT INTO REVERSE POLISH NOTATION
   const equationArr = userOutput.innerText.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
   );
-  const replacedNegatives = replaceDoubleNegatives(equationArr)
+  const replacedNegatives = replaceDoubleNegatives(equationArr);
   const reversePolishNotationArr = infixToRPN(replacedNegatives);
 
-  return(evaluateRPN(reversePolishNotationArr));
-}
+  return evaluateRPN(reversePolishNotationArr);
+};
 
 const handleButtonPress = (event: Event) => {
   const button = event.target as HTMLButtonElement;
@@ -211,10 +241,10 @@ const handleButtonPress = (event: Event) => {
   } else if (input === "%") {
     const result = (processCalculation() / 100).toString();
     resetOutput(result);
-  } else { // FINAL CASE THE INPUT IS "="
+  } else {
+    // FINAL CASE THE INPUT IS "="
     const result = processCalculation().toString();
     resetOutput(result);
-    
   }
 };
 
