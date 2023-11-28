@@ -1,11 +1,9 @@
 class Calculator {
-  private expression: string[] = [];
   private static digitRegex = new RegExp(/[0-9.]/);
   private static opperatorRegex = new RegExp(/[+\-x÷]/);
   private static trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
-  private static brackets = ["(", ")"];
 
-  private replaceDoubleNegatives (infixExpression: string[]): string[] {
+  private replaceDoubleNegatives(infixExpression: string[]): string[] {
     const modifiedExpression = [];
 
     for (let i = 0; i < infixExpression.length; i++) {
@@ -26,9 +24,9 @@ class Calculator {
     }
 
     return modifiedExpression;
-  };
+  }
 
-  private getPrecedence (operator: string){
+  private getPrecedence(operator: string) {
     switch (operator) {
       case "+":
       case "-":
@@ -43,12 +41,8 @@ class Calculator {
       default:
         return 0;
     }
-  };
-  private handleOperator (
-    token: string,
-    stack: string[],
-    queue: string[]
-  ) {
+  }
+  private handleOperator(token: string, stack: string[], queue: string[]) {
     //EMPTY STACK OF OPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN,
     //THEN ADD TOKEN TO THE STACK
     while (
@@ -58,10 +52,9 @@ class Calculator {
       queue.push(stack.pop()!);
     }
     stack.push(token);
-  };
+  }
 
-  private handleClosingParenthesis (
-    token: string,
+  private handleClosingParenthesis(
     stack: string[],
     queue: string[]
   ) {
@@ -71,9 +64,9 @@ class Calculator {
     }
     //REMOVE LEFT BRACKET
     stack.pop();
-  };
+  }
 
-  private isNegativeNumber (index: number, tokens: string[]): boolean {
+  private isNegativeNumber(index: number, tokens: string[]): boolean {
     // Check if the current token is a minus sign and if it is either the first character,
     // or it follows an operator or an opening parenthesis
     return (
@@ -82,11 +75,11 @@ class Calculator {
         Calculator.opperatorRegex.test(tokens[index - 1]) ||
         tokens[index - 1] === "(")
     );
-  };
+  }
 
   //CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
   // I.E. 5 + 3 --> 5 3 +
-  private infixToRPN (tokens: string[]): string[] {
+  private infixToRPN(tokens: string[]): string[] {
     if (!tokens || tokens.length === 0) {
       throw new Error("Error with tokens");
     }
@@ -107,7 +100,7 @@ class Calculator {
       } else if (token === "(") {
         stack.push(token);
       } else if (token === ")") {
-        this.handleClosingParenthesis(token, stack, queue);
+        this.handleClosingParenthesis(stack, queue);
       } else if (Calculator.trigRegex.test(token)) {
         stack.push(token);
       }
@@ -118,10 +111,10 @@ class Calculator {
     }
 
     return queue;
-  };
+  }
 
   //TAKES AN EQUATION IN REVERSE POLISH NOTATION AND RETURNS ITS RESULT
-  private evaluateRPN (tokens: string[]): number {
+  private evaluateRPN(tokens: string[]): number {
     let stack: number[] = [];
 
     tokens.forEach((token) => {
@@ -169,5 +162,19 @@ class Calculator {
     });
 
     return stack[0];
-  };
+  }
+
+  public calculate(expression: string): number {
+    //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
+    //THEN COVERTS IT INTO REVERSE POLISH NOTATION
+    const equationArr = expression.split(
+      /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
+    );
+    const replacedNegatives = this.replaceDoubleNegatives(equationArr);
+    const reversePolishNotationArr = this.infixToRPN(replacedNegatives);
+
+    return this.evaluateRPN(reversePolishNotationArr);
+  }
 }
+
+export default Calculator;

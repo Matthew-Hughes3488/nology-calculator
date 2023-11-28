@@ -1,17 +1,18 @@
 import "./main.scss";
-import "./calculator";
+import Calculator from './calculator';
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
+const calculator = new Calculator();
 
 //FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
 
-const userOutput = document.querySelector<HTMLHeadElement>(
+export const userOutput = document.querySelector<HTMLHeadElement>(
   ".calculator__output"
 );
 if (!userOutput) throw new Error("Error with query selector");
@@ -35,28 +36,13 @@ const resetCalculator = () => {
 };
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
-const divideByZeroCheck = () => {
+export const divideByZeroCheck = () => {
   if (userOutput.innerText.includes("÷0")) {
     guardAudio.play();
     guardImage.style.display = "unset";
     guardImage.style.zIndex = "10";
     main.style.display = "none";
   }
-};
-
-//EVALUATES THE USERS INPUT AND RETURNS THE RESULT
-const processCalculation = (): number => {
-  divideByZeroCheck();
-
-  //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
-  //THEN COVERTS IT INTO REVERSE POLISH NOTATION
-  const equationArr = userOutput.innerText.split(
-    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
-  );
-  const replacedNegatives = replaceDoubleNegatives(equationArr);
-  const reversePolishNotationArr = infixToRPN(replacedNegatives);
-
-  return evaluateRPN(reversePolishNotationArr);
 };
 
 const handleButtonPress = (event: Event) => {
@@ -74,11 +60,11 @@ const handleButtonPress = (event: Event) => {
   } else if (input === "C") {
     resetCalculator();
   } else if (input === "%") {
-    const result = (processCalculation() / 100).toString();
+    const result = (calculator.calculate(userOutput.innerText) / 100).toString();
     resetOutput(result);
   } else {
     // FINAL CASE THE INPUT IS "="
-    const result = processCalculation().toString();
+    const result = calculator.calculate(userOutput.innerText).toString();
     resetOutput(result);
   }
 };
