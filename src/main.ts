@@ -193,9 +193,11 @@ const evaluateRPN = (tokens: string[]): number => {
   return stack[0];
 };
 
+//EVALUATES THE USERS INPUT AND RETURNS THE RESULT
 const processCalculation = (): number => {
   divideByZeroCheck();
-  //SPLITS THE USERS INPUT INTO AN ARRAY, THEN REPLACES DOUBLE NEGATIVES,
+  
+  //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
   //THEN COVERTS IT INTO REVERSE POLISH NOTATION
   const equationArr = userOutput.innerText.split(
     /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
