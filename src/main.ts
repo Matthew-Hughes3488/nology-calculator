@@ -1,4 +1,5 @@
 import "./main.scss";
+import "./calculator";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
