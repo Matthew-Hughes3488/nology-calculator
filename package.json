@@ -1,5 +1,7 @@
 {
   "name": "nology-calculator",
+  "homepage": "https://Matthew-Hughes3488.github.io/nology-calculator",
+  "author": "matthew-hughes",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,6 +11,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "gh-pages": "^6.1.0",
     "sass": "^1.69.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
