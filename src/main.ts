@@ -36,7 +36,7 @@ const resetCalculator = () => {
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
-  console.log(userOutput.innerText.includes("÷ 0") && !userOutput.innerText.includes("÷0."));
+  console.log(userOutput.innerText.includes("÷0") && !userOutput.innerText.includes("÷0."));
   
   if (userOutput.innerText.includes("÷0") && !userOutput.innerText.includes("÷0.")) {
     guardAudio.play();
