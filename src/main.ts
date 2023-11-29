@@ -11,27 +11,28 @@ const calculator = new Calculator();
 
 //FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
-if (buttons.length === 0) throw new Error("Error with query all");
-const userOutput = document.querySelector<HTMLHeadElement>(
-  ".display__text"
-);
-if (!userOutput) throw new Error("Error with query selector");
+const userOutput = document.querySelector<HTMLHeadElement>(".display__text");
 const guardImage = document.querySelector<HTMLImageElement>("#Guard");
-if (!guardImage) throw new Error("Error with query selector");
 const guardAudio = document.querySelector<HTMLAudioElement>("#Stop");
-if (!guardAudio) throw new Error("Error with query selector");
 const main = document.querySelector<HTMLElement>(".calculator");
-if (!main) throw new Error("Error with query selector");
+if (
+  buttons.length === 0 ||
+  !userOutput ||
+  !guardImage ||
+  !guardAudio ||
+  !main
+) {
+  throw new Error("Error with one or more query selectors");
+}
 
 const resetOutput = (resetString: string = defaultOutput) => {
   userOutput.textContent = resetString;
 };
 
 const addToOutput = (stringToAdd: string) => {
-  if(userOutput.innerText === defaultOutput)
+  if (userOutput.innerText === defaultOutput)
     userOutput.innerText = stringToAdd;
-  else
-    userOutput.innerText += stringToAdd;
+  else userOutput.innerText += stringToAdd;
 };
 
 const resetCalculator = () => {
@@ -40,7 +41,10 @@ const resetCalculator = () => {
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
-  if (userOutput.innerText.includes("÷0") && !userOutput.innerText.includes("÷0.")) {
+  if (
+    userOutput.innerText.includes("÷0") &&
+    !userOutput.innerText.includes("÷0.")
+  ) {
     guardAudio.play();
     guardImage.style.display = "unset";
     guardImage.style.zIndex = "10";
