@@ -2,12 +2,12 @@
 
 .calculator{
     margin: 5px;
-    background-color: $color-black;
-    border: 2px solid red;
+    background-color: $color-blue;
+    border: 2px solid $color-dark-grey;
     box-shadow: 6px 6px 10px 6px $color-light-grey;
     border-radius: 5px;
     width: 400px;
-    height: 450px;
+    height: 550px;
 
     display: flex;
     flex-direction: column;
@@ -16,8 +16,8 @@
 
 .display{
     margin: 10px;
-    background-color: $color-light-grey;
-    border: 2px solid red;
+    background-color: $color-dark-grey;
+    border: 2px solid $color-dark-grey;
     display: flex;
     justify-content: flex-end;
     align-items: center;
