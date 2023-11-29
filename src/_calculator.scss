@@ -1,7 +1,12 @@
 @use "./variables" as *;
 
 .calculator{
+    border: 2px solid red;
+    border-radius: 5px;
+
+
     &__output{
+        border-bottom: 5px solid red;
         color: $color-white;
     }
 }
