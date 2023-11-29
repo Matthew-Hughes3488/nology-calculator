@@ -150,7 +150,7 @@ class Calculator {
   EXAMPLE:
   INPUT: ['2', '3', '+', '4', '*']
   OUTPUT: 14
-  (EVALUATION: (2 + 3) * 4 = 14)
+  (EVALUATION: (2 + 3) * 4 = 20)
 */
   private evaluateRPN(tokens: string[]): number {
     let stack: number[] = [];
