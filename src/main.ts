@@ -1,15 +1,16 @@
 import "./main.scss";
+import Calculator from "./calculator";
 
 const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
 
+const calculator = new Calculator();
 
 //FETCHING AND VALIDATING ALL NEEDED ELEMENTS
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
-
 const userOutput = document.querySelector<HTMLHeadElement>(
   ".calculator__output"
 );
@@ -35,193 +36,12 @@ const resetCalculator = () => {
 
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
-  if (userOutput.innerText.includes("÷0")) {
+  if (userOutput.innerText.includes("÷0") && !userOutput.innerText.includes("÷0.")) {
     guardAudio.play();
     guardImage.style.display = "unset";
     guardImage.style.zIndex = "10";
     main.style.display = "none";
   }
-};
-
-//TAKES AN ARRAY AND REPLACES DOUBLE NEGATIVES WITH A PLUS SIGN, THEN RETURNS A NEW ARRAY
-const replaceDoubleNegatives = (infixExpression: string[]): string[] => {
-  const modifiedExpression = [];
-
-  for (let i = 0; i < infixExpression.length; i++) {
-    const token = infixExpression[i];
-
-    if (token !== "-") {
-      modifiedExpression.push(token);
-    } else {
-      //IF A '-' IS ECOUNTERED, CHECK THE NEXT TOKEN FOR ANOTHER '-'
-      if (infixExpression[i + 1] === "-") {
-        modifiedExpression.push("+");
-        //SKIP THE NEXT TOKEN
-        i++;
-      } else {
-        modifiedExpression.push(token);
-      }
-    }
-  }
-
-  return modifiedExpression;
-};
-
-//DEFINES THE PRECEDENCE FOR EACH MATHEMATICAL OPPERATOR
-//THE HIGHER THE NUMBER THE HIGHER THE PRESEDENCE
-function getPrecedence(operator: string) {
-  switch (operator) {
-    case "+":
-    case "-":
-      return 1;
-    case "x":
-    case "÷":
-      return 2;
-    case "sin":
-    case "cos":
-    case "tan":
-      return 3;
-    default:
-      return 0;
-  }
-}
-
-const handleOperator = (token: string, stack: string[], queue: string[]) => {
-  //EMPTY STACK OF OPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN,
-  //THEN ADD TOKEN TO THE STACK
-  while (
-    stack.length > 0 &&
-    getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
-  ) {
-    queue.push(stack.pop()!);
-  }
-  stack.push(token);
-};
-
-const handleClosingParenthesis = (
-  token: string,
-  stack: string[],
-  queue: string[]
-) => {
-  //EMPTY STACK OF ALL OPPERATORS UNTIL A LEFT BRACKET IS ENCOUNTERED
-  while (stack.length > 0 && stack[stack.length - 1] !== "(") {
-    queue.push(stack.pop()!);
-  }
-  //REMOVE LEFT BRACKET
-  stack.pop();
-};
-
-const isNegativeNumber = (index: number, tokens: string[]): boolean => {
-  // Check if the current token is a minus sign and if it is either the first character,
-  // or it follows an operator or an opening parenthesis
-  return (
-    tokens[index] === "-" &&
-    (index === 0 ||
-      opperatorRegex.test(tokens[index - 1]) ||
-      tokens[index - 1] === "(")
-  );
-};
-
-//CONVERTS A INFIX EQUATION TO THE REVERSE POLISH NOTATION FORMAT
-// I.E. 5 + 3 --> 5 3 +
-const infixToRPN = (tokens: string[]): string[] => {
-  if (!tokens || tokens.length === 0) {
-    throw new Error("Error with tokens");
-  }
-
-  // USING SHUNTING YARD ALGO
-  let queue: string[] = [];
-  let stack: string[] = [];
-
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    if(isNegativeNumber(i, tokens)){
-      const negativeNumber = `-${tokens[++i]}`;
-      queue.push(negativeNumber);
-    }else if (digitRegex.test(token)) {
-      queue.push(token);
-    } else if (opperatorRegex.test(token)) {
-      handleOperator(token, stack, queue);
-    } else if (token === "(") {
-      stack.push(token);
-    } else if (token === ")") {
-      handleClosingParenthesis(token, stack, queue);
-    } else if (trigRegex.test(token)) {
-      stack.push(token);
-    }
-  }
-
-  while (stack.length > 0) {
-    queue.push(stack.pop()!);
-  }
-  
-  return queue;
-};
-
-//TAKES AN EQUATION IN REVERSE POLISH NOTATION AND RETURNS ITS RESULT
-const evaluateRPN = (tokens: string[]): number => {
-  let stack: number[] = [];
-
-  tokens.forEach((token) => {
-    if (token === "+") {
-      const number1 = stack.pop();
-      const number2 = stack.pop();
-      if (!number1 || !number2) throw new Error("Error with stack");
-
-      stack.push(number1 + number2);
-    } else if (token === "-") {
-      const number1 = stack.pop();
-      const number2 = stack.pop();
-      if (!number1 || !number2) throw new Error("Error with stack");
-
-      stack.push(number2 - number1);
-    } else if (token === "x") {
-      const number1 = stack.pop();
-      const number2 = stack.pop();
-      if (!number1 || !number2) throw new Error("Error with stack");
-
-      stack.push(number1 * number2);
-    } else if (token === "÷") {
-      const number1 = stack.pop();
-      const number2 = stack.pop();
-      if (!number1 || !number2) throw new Error("Error with stack");
-
-      stack.push(number2 / number1);
-    } else if (token === "sin") {
-      const number1 = stack.pop();
-      if (!number1) throw new Error("Error with stack");
-
-      stack.push(Math.sin(number1));
-    } else if (token === "cos") {
-      const number1 = stack.pop();
-      if (!number1) throw new Error("Error with stack");
-
-      stack.push(Math.cos(number1));
-    } else if (token === "tan") {
-      const number1 = stack.pop();
-      if (!number1) throw new Error("Error with stack");
-
-      stack.push(Math.tan(number1));
-      //PUSH TOKEN TO STACK IF IT'S AN OPERAND
-    } else stack.push(Number(token));
-  });
-
-  return stack[0];
-};
-
-//EVALUATES THE USERS INPUT AND RETURNS THE RESULT
-const processCalculation = (): number => {
-  divideByZeroCheck();
-
-  //SPLITS THE USERS INPUT INTO AN ARRAY, REPLACES DOUBLE NEGATIVES,
-  //THEN COVERTS IT INTO REVERSE POLISH NOTATION
-  const equationArr = userOutput.innerText.split(
-    /(?=[+x÷()-])|(?<=[+x÷()-])|(?<=sin|cos|tan)|(?=sin|cos|tan)/g
-  );
-  const replacedNegatives = replaceDoubleNegatives(equationArr);
-  const reversePolishNotationArr = infixToRPN(replacedNegatives);
-
-  return evaluateRPN(reversePolishNotationArr);
 };
 
 const handleButtonPress = (event: Event) => {
@@ -239,11 +59,15 @@ const handleButtonPress = (event: Event) => {
   } else if (input === "C") {
     resetCalculator();
   } else if (input === "%") {
-    const result = (processCalculation() / 100).toString();
+    divideByZeroCheck();
+    const result = (
+      calculator.calculate(userOutput.innerText) / 100
+    ).toString();
     resetOutput(result);
   } else {
     // FINAL CASE THE INPUT IS "="
-    const result = processCalculation().toString();
+    divideByZeroCheck();
+    const result = calculator.calculate(userOutput.innerText).toString();
     resetOutput(result);
   }
 };
