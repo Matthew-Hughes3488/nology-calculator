@@ -5,6 +5,7 @@ const digitRegex = new RegExp(/[0-9.]/);
 const opperatorRegex = new RegExp(/[+\-x÷]/);
 const trigRegex = new RegExp(/\b(sin|cos|tan)\b/);
 const brackets = ["(", ")"];
+const defaultOutput = "It's Mathin Time";
 
 const calculator = new Calculator();
 
@@ -22,12 +23,15 @@ if (!guardAudio) throw new Error("Error with query selector");
 const main = document.querySelector<HTMLElement>(".calculator");
 if (!main) throw new Error("Error with query selector");
 
-const resetOutput = (resetString: string = "") => {
+const resetOutput = (resetString: string = defaultOutput) => {
   userOutput.textContent = resetString;
 };
 
 const addToOutput = (stringToAdd: string) => {
-  userOutput.textContent += stringToAdd;
+  if(userOutput.innerText === defaultOutput)
+    userOutput.innerText = stringToAdd;
+  else
+    userOutput.innerText += stringToAdd;
 };
 
 const resetCalculator = () => {
