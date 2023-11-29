@@ -62,7 +62,7 @@ class Calculator {
   }
 
   private handleOperator(token: string, stack: string[], queue: string[]) {
-    //EMPTY STACK OF OPERATORS WITH LOWER PRECEDENCE THAN THE CURRENT TOKEN,
+    //EMPTY STACK OF OPERATORS WITH HIGHER PRECEDENCE THAN THE CURRENT TOKEN,
     //THEN ADD TOKEN TO THE STACK
     while (
       stack.length > 0 &&
@@ -82,9 +82,10 @@ class Calculator {
     stack.pop();
   }
 
+  //CHECKS IF THE '-' SIGN IS PART OF A NEGTIVE NUMBER OR A OPPERATOR
   private isNegativeNumber(index: number, tokens: string[]): boolean {
-    // CHECK IF THE CURRENT TOKEN IS A MINUS SIGN AND IF IT IS EITHER THE FIRST CHARACTER,
-    // OR IT FOLLOWS AN OPERATOR OR AN OPENING PARENTHESIS
+    /* CHECKS IF THE '-' IS THE FIRST CHARCTER, OR IF THE PREVIOUS CHARACTER IS AN OPPERATOR, 
+       IF YES THEN THE '-' IS APART OF A NEGATIVE NUMBER */
     return (
       tokens[index] === "-" &&
       (index === 0 ||
