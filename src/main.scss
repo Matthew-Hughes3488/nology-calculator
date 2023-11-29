@@ -9,16 +9,12 @@
 }
 
 body{
+    background-color: $color-light-grey;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: grey;
     width: 100vw;
     height: 100vh;
-}
-
-main{
-    background-color: $color-black;
 }
 
 #Guard{

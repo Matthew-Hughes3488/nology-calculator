@@ -1,7 +1,28 @@
 @use "./variables" as *;
 
 .calculator{
-    &__output{
+    margin: 5px;
+    background-color: $color-blue;
+    border: 2px solid $color-dark-grey;
+    border-radius: 20px;
+    width: 400px;
+    height: 550px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.display{
+    margin: 10px;
+    background-color: $color-dark-grey;
+    border: 2px solid $color-dark-grey;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    &__text{
+        padding: 10px 5px;
         color: $color-white;
     }
 }
