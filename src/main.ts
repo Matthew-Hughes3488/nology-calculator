@@ -12,7 +12,7 @@ const calculator = new Calculator();
 const buttons = document.querySelectorAll(".buttons__button");
 if (buttons.length === 0) throw new Error("Error with query all");
 const userOutput = document.querySelector<HTMLHeadElement>(
-  ".calculator__output"
+  ".display__text"
 );
 if (!userOutput) throw new Error("Error with query selector");
 const guardImage = document.querySelector<HTMLImageElement>("#Guard");

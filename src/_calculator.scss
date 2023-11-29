@@ -1,6 +1,7 @@
 @use "./variables" as *;
 
 .calculator{
+    margin: 5px;
     background-color: $color-black;
     border: 2px solid red;
     box-shadow: 6px 6px 10px 6px $color-light-grey;
@@ -11,14 +12,18 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    
+}
 
+.display{
+    margin: 10px;
+    background-color: $color-light-grey;
+    border: 2px solid red;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 
-    &__output{
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        border-bottom: 5px solid red;
+    &__text{
+        padding: 10px 5px;
         color: $color-white;
     }
 }
