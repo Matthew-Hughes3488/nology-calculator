@@ -35,10 +35,6 @@ const addToOutput = (stringToAdd: string) => {
   else userOutput.innerText += stringToAdd;
 };
 
-const resetCalculator = () => {
-  resetOutput();
-};
-
 //CHECKS IF THE CURRENT EXPRESSION INVOLVES DIVIDING BY ZERO, PLAYS EASTER EGG IF TRUE
 const divideByZeroCheck = () => {
   if (
@@ -56,6 +52,7 @@ const handleButtonPress = (event: Event) => {
   const button = event.target as HTMLButtonElement;
   const input = button.innerHTML;
 
+  //CHECKS WHICH TYPE OF BUTTON HAS BEEN PRESSED AND PERFORMS CORRESPONDING ACTIONS
   if (
     digitRegex.test(input) ||
     opperatorRegex.test(input) ||
@@ -65,7 +62,7 @@ const handleButtonPress = (event: Event) => {
   } else if (trigRegex.test(input)) {
     addToOutput(`${input}(`);
   } else if (input === "C") {
-    resetCalculator();
+    resetOutput();
   } else if (input === "%") {
     divideByZeroCheck();
     const result = (
