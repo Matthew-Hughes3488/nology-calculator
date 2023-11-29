@@ -17,7 +17,6 @@ class Calculator {
   @param infixExpression: AN ARRAY OF STRINGS REPRESENTING AN INFIX MATHEMATICAL EXPRESSION.
   @returns AN ARRAY OF STRINGS WITH CONSECUTIVE DOUBLE MINUS SIGNS REPLACED BY A SINGLE PLUS SIGN.
 
-  
   Example:
   Input: ['5', '-', '-', '3', '+', '8', '*', '2']
   Output: ['5', '+', '3', '+', '8', '*', '2']
